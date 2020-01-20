@@ -4,7 +4,7 @@ obtener información sobre series de tiempo de experimentos de eventos circadian
 
 ## Descripción
 
-En esta versión del programa, utilizo una clase llamada ```Cosinor``` en la que se puede implementar métodos para hacer el 
+En esta versión del programa, utilizo una clase llamada ```time_series``` en la que se puede implementar métodos para hacer el 
 análisis. Estos métodos y las otras funciones están definidas en otros archivos cual módulos para no ocupar un solo archivo de mil 
 líneas, sino simplemente implementar las cosas en uno más breve importando las funciones de los otros. Cada uno de los módulos, 
 ```reading.py``` y ```analysis.py``` tiene una cláusula al final de la definición de funciones en la que, de correr el módulo 
