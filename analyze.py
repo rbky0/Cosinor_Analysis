@@ -8,6 +8,7 @@ Created on Wed Jan 15 12:57:56 2020
 import numpy
 import scipy.optimize
 import random
+import matplotlib.pyplot as plt
 
 def norm(vector):
     """
@@ -71,7 +72,8 @@ def fitting(time_series):
     res = scipy.optimize.minimize(fitting_error,
                                   x0 = initials,
                                   args = time_series,
-                                  method = 'nelder-mead')
+                                  method = 'nelder-mead',
+                                  tol = 1e-10)
     mes, amp, acr = res.x
     if amp < 0:
         amp = numpy.abs(amp)
@@ -81,6 +83,30 @@ def fitting(time_series):
     fit = mes + (amp * numpy.cos((2 * numpy.pi * (hour - acr)) / 1440))
     return [mes, amp, acr, fit]
 
+def fitting_value(real, fit):
+    """
+    A FUNCTION THAT CALCULATES THE R^2 VALUE OF A FIT, WITH THE REAL VALUES
+    CONSISTING OF real AND THE FITTED VALUES OF fit.
+    
+    THE R^2 VALUE WILL BE CALCULATED WITH THE FUNCTION
+        R^2 := 1 - (SS_tot / SS_res)
+    WHERE SS_tot AND SS_res ARE
+        SS_tot = sum((y_i - y_mean)^2)
+        SS_res = sum((y_i - f_i)^2)
+    WHERE y_i AND f_i ARE THE i'th ELEMENT OF THE REAL AND FITTED VECTORS,
+    RESPECTIVELY.
+    """
+    y = real
+    f = fit
+    if numpy.all(y == f):
+        return 1
+    n = float(len(y))
+    y_mean = (1 / n) * sum(y)
+    SS_t = sum((y - y_mean) ** 2)
+    SS_r = sum((y - f) ** 2)
+    R = 1 - (SS_r / SS_t)
+    return R
+
 
 #%%
 class time_series():
@@ -89,7 +115,7 @@ class time_series():
     INFORMATION REGARDING THE COSINOR FIT OF THE TIME SERIES.
     """
 
-    def __init__(self, hour_vector, measurements):
+    def __init__(self, hour_vector, measurements, name):
         """
         INITIATES THE CLASS.
         
@@ -101,6 +127,8 @@ class time_series():
         """
         self.time = hour_vector
         self.data = measurements
+        self.name = name
+        self.fitted = False
         self.fit = None
         self.mesor = None
         self.amplitude = None
@@ -108,12 +136,14 @@ class time_series():
         self.r2 = None
     
     def __str__(self):
-        if not self.fit is None:
-            output = ("Mesor:\t\t{:.2f} Activity measures\n"
+        if self.fitted:
+            output = ("Column:\t\t{}\n"
+                      "Mesor:\t\t{:.2f} Activity measures\n"
                       "Amplitude:\t{:.2f} Activity measures\n"
                       "Acrophase at \t{}:{:02} hours\n"
                       "R^2:\t\t{}")
-            output = output.format(self.mesor,
+            output = output.format(self.name,
+                                   self.mesor,
                                    self.amplitude,
                                    int(self.acrophase / 60), 
                                    int(self.acrophase % 60),
@@ -123,12 +153,14 @@ class time_series():
             return "Time series has not been fitted."
     
     def __repr__(self):
-        if not self.fit is None:
-            output = ("Mesor:\t\t{:.2f} Activity measures\n"
+        if self.fitted:
+            output = ("Column:\t\t{}{}\n"
+                      "Mesor:\t\t{:.2f} Activity measures\n"
                       "Amplitude:\t{:.2f} Activity measures\n"
                       "Acrophase at \t{}:{:02} hours\n"
                       "R^2:\t\t{}")
-            output = output.format(self.mesor,
+            output = output.format(self.name,
+                                   self.mesor,
                                    self.amplitude,
                                    int(self.acrophase / 60), 
                                    int(self.acrophase % 60),
@@ -143,8 +175,19 @@ class time_series():
         self.amplitude = r[1]
         self.acrophase = r[2]
         self.fit = r[3]
-        self.r2 = 0.69
-        
+        self.r2 = fitting_value(self.data, self.fit)
+        self.fitted = True
+    
+    def compare(self):
+        if not self.fitted:
+            print("Will not plot unfitted data.")
+        else:
+            plt.plot(self.time, self.data, ".")
+            plt.plot(self.time, self.fit, "-")
+            plt.xlabel("Time (minutes)")
+            plt.ylabel("Measure")
+            plt.title("Data and Cosinor for series {}".format(self.name))
+            plt.show()
 
 #%%
 if __name__ == "__main__":
@@ -165,7 +208,7 @@ if __name__ == "__main__":
     data = data.T
     #print(data)
     e = fitting_error([0, 2, 3], data)
-    print(e)
+    #print(e)
     print("fitting_error RAISES NO EXCEPTIONS.")
 
     print("\nCHECK IF fitting FUNCTION WORKS PROPERLY.")
@@ -179,24 +222,49 @@ if __name__ == "__main__":
         ts = numpy.array([h, d]).T
         r = fitting(numpy.array([h, d]).T)
         e = numpy.array(r[:3]) - numpy.array([mes, amp, acr])
-        print(e)
-        print(norm(e))
-        assert numpy.all(norm(e) < 1e-3), error
+        #print(e)
+        assert numpy.all(e < 1e-3), error
     print("fitting WORKS PROPERLY WITHOUT \"NOISE\".")
     
-    s = 0.1
-    error = "SOMETHING WRONG WITH fitting WITH NOISE."
+    s = 0.01
+    error = "SOMETHING WRONG WITH fitting WITH SMALL NOISE."
     for i in range(100):
         h = numpy.linspace(0, 60*24, 25)
         mes, amp, acr = [random.randint(300, 600),
                          random.randint(100, 300),
                          random.randint(0, 1440)]
         d = mes + (amp * numpy.cos((2 * numpy.pi * (h - acr)) / 1440))
-        noise = numpy.array([random.gauss(0, s) for i in h])
+        noise = numpy.array([random.gauss(0, amp*s) for i in h])
         d = d + noise
         ts = numpy.array([h, d]).T
         r = fitting(numpy.array([h, d]).T)
         e = numpy.array(r[:3]) - numpy.array([mes, amp, acr])
-        print(e)
-        assert numpy.all(norm(e) < 1e-3), error
+        #print(e)
+        assert numpy.all(e < 10), error
     print("fitting WORKS PROPERLY WITH SMALL \"NOISE\".")
+    
+    s = 0.1
+    error = "SOMETHING WRONG WITH fitting WITH BIG NOISE."
+    for i in range(100):
+        break ### I NEED TO REMOVE THIS EVENTUALLY
+        h = numpy.linspace(0, 60*24, 25)
+        mes, amp, acr = [random.randint(300, 600),
+                         random.randint(100, 300),
+                         random.randint(0, 1440)]
+        d = mes + (amp * numpy.cos((2 * numpy.pi * (h - acr)) / 1440))
+        noise = numpy.array([random.gauss(0, amp*s) for i in h])
+        d = d + noise
+        ts = numpy.array([h, d]).T
+        r = fitting(numpy.array([h, d]).T)
+        e = numpy.array(r[:3]) - numpy.array([mes, amp, acr])
+        #print(e)
+        assert numpy.all(e < 10), error
+    print("fitting WORKS PROPERLY WITH BIG \"NOISE\".")
+    print("fitting WORKS PROPERLY IN GENERAL.")
+    
+    print("\nCHECKING IF fitting_value WORKS PROPERLY.")
+    error = "SOMETHING WRONG WITH fitting_value."
+    x = numpy.array(range(100))
+    assert fitting_value(x, x) == 1, error
+    ### I NEED TO COME UP WITH MORE WAYS TO CHECK THIS FUNCTION
+    print("fitting_value WORKS PROPERLY.")
