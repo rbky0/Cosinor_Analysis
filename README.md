@@ -37,8 +37,10 @@ se puede responder de tres maneras distintas:
 * con la opción "all", que analiza todas las columnas.
 * con una lista de nombres de columna que se quiere analizar, con cada elemento separado por comas. Por ejemplo, si los nombres
 de las columnas son "Control", "Ayuno" y "Dieta", y se quiere estudiar únicamente el control y el ayuno, la respuesta puede ser
-```Control, Ayuno```
-Cabe resaltar que el nombre tiene que estar escrito exactamente como está escrito en el documento. De lo contrario, volverá a
+
+ ```Control, Ayuno```
+
+ Cabe resaltar que el nombre tiene que estar escrito exactamente como está escrito en el documento. De lo contrario, volverá a
 salir el *prompt*.
 
 De aquí en adelante, el programa da indicaciones y las opciones para responder preguntas. En el caso de que se desee guardar la
