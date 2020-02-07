@@ -138,8 +138,8 @@ class time_series():
     def __str__(self):
         if self.fitted:
             output = ("Column:\t\t{}\n"
-                      "Mesor:\t\t{:.2f} Activity measures\n"
-                      "Amplitude:\t{:.2f} Activity measures\n"
+                      "Mesor:\t\t{:.2f} Measures\n"
+                      "Amplitude:\t{:.2f} Measures\n"
                       "Acrophase at \t{}:{:02} hours\n"
                       "R^2:\t\t{}")
             output = output.format(self.name,
@@ -155,8 +155,8 @@ class time_series():
     def __repr__(self):
         if self.fitted:
             output = ("Column:\t\t{}\n"
-                      "Mesor:\t\t{:.2f} Activity measures\n"
-                      "Amplitude:\t{:.2f} Activity measures\n"
+                      "Mesor:\t\t{:.2f} Measures\n"
+                      "Amplitude:\t{:.2f} Measures\n"
                       "Acrophase at \t{}:{:02} hours\n"
                       "R^2:\t\t{}")
             output = output.format(self.name,
