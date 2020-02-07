@@ -16,15 +16,32 @@ El último archivo, ```cosinor.py```, importa los otros dos módulos y trabaja c
 ## Uso
 
     
-    $ python cosinor.py datos.csv
+    $ python[3] cosinor.py datos.xls
     
 
-El archivo ```datos.csv``` debe estar contenido en el directorio donde están los archivos ```cosinor.py``` y los dos módulos.
-En la primer columna se indica la hora con respecto a la cual se va a hacer el ajuste. El resto de las columnas indican las 
-mediciones. El programa genera una lista de objetos tipo ```time_series```, donde el elemento $n$-ésimo contiene la columna de 
-tiempo del archivo ```.csv``` y la $n$-ésima columna de datos. Posteriormente, pregunta qué se quiere analizar (por el momento
-funciona solo con el número de la columna, aunque quiero hacer que funcione con el nombre del experimento) y calcula el coseno que
-ajusta mejor a los datos. Eso regresa los parámetros de ajuste, y un valor de R$^2$ que representa el *goodness of fit*. Además, grafica la serie de tiempo contra su ajuste para guardar la figura.
+El archivo ```datos.xls``` debe estar contenido en el directorio donde están los archivos ```cosinor.py``` y los dos módulos, a
+menos de que se especifique la dirección completa o relativa del archivo. En otras palabras, el programa no es un programa global
+(a menos de que se cambie el PATH del sistema a que incluya el PATH donde se encuentran los programas). La extensión del archivo
+puede ser también ```.xlsx```.
 
-Al terminar de analizar, se puede analizar un nuevo conjunto de columnas si así se desea, o terminar el programa, con la opción de 
-escribir los análisis realizados en un archivo ```.txt``` con el nombre deseado.
+El archivo de Excel debe contener primero una columna con la hora de la medición, seguida de columnas de datos. Se pide que las
+columnas estén alineadas en la parte superior izquierda del archivo, *i.e.* empezando en la celda A1. Adicionalmente, se pide
+que no haya filas o columnas en blanco entre filas o columnas de datos, ya que esto causará un problema. Fuera de eso, se le
+puede dar formato de negritas o color o alguno otro deseado. Finalmente, se pide que el archivo contenga únicamente un libro,
+y que éste contenga la información que se busca analizar. En principio, el programa lee el primer libro por *default*, pero este
+comportamiento aún no se puede controlar apropiadamente, entonces es preferible evitar problemas de esa naturaleza.
+
+Lo primero que se va a ver al correr el programa es un *prompt* que pregunta sobre las columnas que se quiere analizar. A éste
+se puede responder de tres maneras distintas:
+* con la opción "-h", que indica el nombre de todas las columnas.
+* con la opción "all", que analiza todas las columnas.
+* con una lista de nombres de columna que se quiere analizar, con cada elemento separado por comas. Por ejemplo, si los nombres
+de las columnas son "Control", "Ayuno" y "Dieta", y se quiere estudiar únicamente el control y el ayuno, la respuesta puede ser
+```Control, Ayuno```
+Cabe resaltar que el nombre tiene que estar escrito exactamente como está escrito en el documento. De lo contrario, volverá a
+salir el *prompt*.
+
+De aquí en adelante, el programa da indicaciones y las opciones para responder preguntas. En el caso de que se desee guardar la
+información obtenida en un archivo de texto, se pide que el nombre no contenga caracteres especiales. Si se desea agregar la
+extensión ```.txt``` o no a la respuesta al prompt es irrelevante, ya que siempre se guardará un archivo de ese formato, con una
+sola extensión.
