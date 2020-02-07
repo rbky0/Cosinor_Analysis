@@ -150,11 +150,11 @@ class time_series():
                                    self.r2)
             return output
         else:
-            return "Time series has not been fitted."
+            return "Time series {} has not been fitted.".format(self.name)
     
     def __repr__(self):
         if self.fitted:
-            output = ("Column:\t\t{}{}\n"
+            output = ("Column:\t\t{}\n"
                       "Mesor:\t\t{:.2f} Activity measures\n"
                       "Amplitude:\t{:.2f} Activity measures\n"
                       "Acrophase at \t{}:{:02} hours\n"
@@ -167,7 +167,7 @@ class time_series():
                                    self.r2)
             return output
         else:
-            return "Time series has not been fitted."
+            return "Time series {} has not been fitted.".format(self.name)
     
     def cosinor(self):
         r = fitting(numpy.array([self.time, self.data]).T) ### DISLIKE
