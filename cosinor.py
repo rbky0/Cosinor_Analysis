@@ -10,6 +10,7 @@ import numpy
 import sys
 import reading
 import analyze
+import writing
 
 #%% FILE READING AND DATA ORGANIZATION
 
@@ -17,7 +18,11 @@ try:
     file = sys.argv[1]
 except:
     file = input("Enter the name of the file you would like to analyze:\n")
-data = pd.read_excel(file)
+try:
+    tab = int(sys.argv[2])
+except:
+    tab = 0
+data = pd.read_excel(file, sheet_name = tab)
 time_header = data.columns[0]
 headers = data.columns[1:]
 headers = [i for i in headers]
@@ -59,14 +64,14 @@ while not finished:
         print()
         print(experiments[column])
         experiments[column].compare()
-    finish = input("Do yo wish to quit? [y/n]\n")
+    finish = input("Do yo wish to quit? [Y/n]\n")
     if finish.lower() == "y" or finish == "":
         finished = True
     elif finish.lower() == "n":
         finished = False
 
 #%% DATA OUTPUT
-output_query = input("Do you wish to save the analyzed data? [y/n]\n")
+output_query = input("Do you wish to save the analyzed data? [y/N]\n")
 if output_query.lower() == "y":
     out_file = input("Enter the file to which you would like to save. Please "
                      "avoid using special characters such as forward slashes "
@@ -74,16 +79,8 @@ if output_query.lower() == "y":
                      "any sort of accent, as they may cause problems while "
                      "saving.\n")
     #print(out_file)
-    if len(out_file.split(".")) == 1 or out_file.split(".")[1] != "txt":
-        out_file = out_file + ".txt"
-    #print(out_file)
-    out_data = ""
-    fitted = [i for i in experiments if experiments[i].fitted]
-    for series in fitted:
-        out_data += str(experiments[series]) + "\n\n" + "-" * 50 + "\n\n"
-    print(out_data)
-    out_file = open(out_file, "w")
-    out_file.write(out_data)
-    out_file.close()
+    if len(out_file.split(".")) == 1 or out_file.split(".")[1] != "xlsx":
+        out_file = out_file + ".xlsx"
+    writing.write_excel(experiments, out_file)
 
 print("The End.")
