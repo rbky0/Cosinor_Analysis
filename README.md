@@ -16,7 +16,7 @@ El último archivo, ```cosinor.py```, importa los otros dos módulos y trabaja c
 ## Uso
 
     
-    $ python[3] cosinor.py datos.xls
+    $ python[3] [direccion/a/programa/]cosinor.py datos.xls [int]
     
 
 El archivo ```datos.xls``` debe estar contenido en el directorio donde están los archivos ```cosinor.py``` y los dos módulos, a
@@ -27,9 +27,10 @@ puede ser también ```.xlsx```.
 El archivo de Excel debe contener primero una columna con la hora de la medición, seguida de columnas de datos. Se pide que las
 columnas estén alineadas en la parte superior izquierda del archivo, *i.e.* empezando en la celda A1. Adicionalmente, se pide
 que no haya filas o columnas en blanco entre filas o columnas de datos, ya que esto causará un problema. Fuera de eso, se le
-puede dar formato de negritas o color o alguno otro deseado. Finalmente, se pide que el archivo contenga únicamente un libro,
-y que éste contenga la información que se busca analizar. En principio, el programa lee el primer libro por *default*, pero este
-comportamiento aún no se puede controlar apropiadamente, entonces es preferible evitar problemas de esa naturaleza.
+puede dar formato de negritas o color o alguno otro deseado.
+
+Finalmente, el valor opcional ```int``` del final especifica qué libro del archivo se va a leer. De no ser especificado, se asume
+que es 0 y por ende el primer libro. El resto de los libros se puede especificar enumerando su posición empezando desde cero.
 
 Lo primero que se va a ver al correr el programa es un *prompt* que pregunta sobre las columnas que se quiere analizar. A éste
 se puede responder de tres maneras distintas:
@@ -45,5 +46,5 @@ salir el *prompt*.
 
 De aquí en adelante, el programa da indicaciones y las opciones para responder preguntas. En el caso de que se desee guardar la
 información obtenida en un archivo de texto, se pide que el nombre no contenga caracteres especiales. Si se desea agregar la
-extensión ```.txt``` o no a la respuesta al prompt es irrelevante, ya que siempre se guardará un archivo de ese formato, con una
+extensión ```.xlsx``` o no a la respuesta al prompt es irrelevante, ya que siempre se guardará un archivo de ese formato, con una
 sola extensión.
